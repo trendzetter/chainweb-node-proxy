@@ -1,0 +1,78 @@
+# Service API endpoints
+upstream service-api {
+    server localhost:1848;
+}
+
+# P2P endpoints
+upstream peer-api {
+    server localhost:8888;
+}
+
+# Mining endpoints
+upstream mining-api {
+    ip_hash; # for work and solve we need sticky connections
+    server localhost:1848;
+}
+
+upstream header-stream {
+    server localhost:1848;
+}
+
+server {
+
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    # Your valid SSL
+    ssl_certificate /root/kda/abc.xyz.me/fullchain.pem;
+    ssl_certificate_key /root/kda/abc.xyz.me/privkey.pem;
+
+
+    access_log /var/log/nginx/chainweb-api-access.log;
+    error_log /var/log/nginx/chainweb-api-error.log;
+
+    # Service API endpoints
+    location = /info {
+        proxy_pass http://service-api;
+    }
+    location = /health-check {
+        proxy_pass http://service-api;
+    }
+    location ~ ^/chainweb/0.0/testnet04/chain/[0-9]+/pact/ {
+        proxy_pass http://service-api;
+    }
+    location ~ ^/chainweb/0.0/testnet04/rosetta/ {
+        proxy_pass http://service-api;
+    }
+
+    # Header stream (not enabled on all nodes)
+    location = /chainweb/0.0/testnet04/header/updates {
+        proxy_buffering off;
+        proxy_pass http://header-stream;
+    }
+
+    # Chain Database Endpoints (forwarded from peer API)
+    location ~ ^/chainweb/0.0/testnet04/chain/[0-9]+/(header|hash|branch|payload) {
+        proxy_pass https://peer-api;
+        proxy_ssl_verify off; # accept self-signed certificates
+    }
+    location = /chainweb/0.0/testnet04/cut {
+        limit_except GET OPTIONS { deny all; }
+        proxy_pass https://peer-api;
+        proxy_ssl_verify off; # accept self-signed certificates
+    }
+
+    # Mining
+    location /chainweb/0.0/testnet04/mining/ {
+        proxy_buffering off;
+        proxy_pass http://mining-api;
+    }
+
+    # Default
+    location / {
+        return 404;
+    }
+
+}
+
+
