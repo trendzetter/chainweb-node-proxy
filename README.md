@@ -4,7 +4,7 @@ nginx config that can be used to place in front of a chainweb node to offer the 
 How to use:
 
 - Install chainweb node
-- Install nginx eg on debian derivatives: apt install nginx libnginx-mod-http-headers-more-filter
+- Install nginx eg on debian derivatives: `apt install nginx libnginx-mod-http-headers-more-filter`
 - Make sure the chainweb node p2p port is set to 8888 (or some port of your choice) in the node config.yaml and matches the P2P endpoint in proxy.txt
 - put your valid certificate in place
 - Copy proxy.txt to /etc/nginx/sites-available/default
