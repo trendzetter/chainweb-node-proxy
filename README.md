@@ -5,7 +5,7 @@ How to use:
 
 - Install chainweb node: https://github.com/Thanos420NoScope/node-setup
 - Install nginx
-- Make sure the chainweb node p2p port is set to 8888 (or some port of your choice) in /root/kda/config.yaml and matches the P2P endpoint in proxy.txt
+- Make sure the chainweb node p2p port is set to 8888 (or some port of your choice) in the node config.yaml and matches the P2P endpoint in proxy.txt
 - put your valid certificate in place
 - Copy proxy.txt to /etc/nginx/sites-available/default
 - restart nginx
