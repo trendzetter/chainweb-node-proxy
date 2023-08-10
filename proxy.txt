@@ -20,7 +20,7 @@ upstream header-stream {
 
 server {
     more_clear_headers Server;  # this requires Headers More nginx module
-    listen YOUR_EXTERNAL_IP:8888 ssl default_server;
+    listen YOUR_EXTERNAL_IP:8888 ssl default_server; # external IP can also be your network ip where the firewall does NAT to
 
     # Your valid SSL
     ssl_certificate /path/to/abc.xyz.me/fullchain.pem;
