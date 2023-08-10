@@ -5,7 +5,14 @@ How to use:
 
 - Install chainweb node
 - Install nginx eg on debian derivatives: `apt install nginx libnginx-mod-http-headers-more-filter`
-- Make sure the chainweb node p2p port is set to 8888 (or some port of your choice) in the node config.yaml and matches the P2P endpoint in proxy.txt
+- Make sure the chainweb node p2p port is set to 8888 (or some port of your choice) and the interface to localhost -assuming nginx is installed on the same server as the node- in the node config.yaml and matches the P2P endpoint in proxy.txt
+  
+```
+p2p:
+  peer:
+    interface: localhost
+``` 
+
 - put your valid certificate in place
 - Copy proxy.txt to /etc/nginx/sites-available/default
 - restart nginx
