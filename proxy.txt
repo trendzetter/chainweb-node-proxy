@@ -20,53 +20,53 @@ upstream header-stream {
 
 server {
 
-    listen 443 ssl default_server;
-    listen [::]:443 ssl default_server;
+    listen YOUR_EXTERNAL_IP:8888 ssl default_server;
 
     # Your valid SSL
-    ssl_certificate /root/kda/abc.xyz.me/fullchain.pem;
-    ssl_certificate_key /root/kda/abc.xyz.me/privkey.pem;
+    ssl_certificate /path/to/abc.xyz.me/fullchain.pem;
+    ssl_certificate_key /path/to/abc.xyz.me/privkey.pem;
 
 
     access_log /var/log/nginx/chainweb-api-access.log;
     error_log /var/log/nginx/chainweb-api-error.log;
 
     # Service API endpoints
-    location = /info {
-        proxy_pass http://service-api;
-    }
-    location = /health-check {
-        proxy_pass http://service-api;
-    }
-    location ~ ^/chainweb/0.0/testnet04/chain/[0-9]+/pact/ {
-        proxy_pass http://service-api;
-    }
-    location ~ ^/chainweb/0.0/testnet04/rosetta/ {
-        proxy_pass http://service-api;
-    }
+    #location = /info {
+    #    proxy_pass http://service-api;
+    #}
+    #location = /health-check {
+    #    proxy_pass http://service-api;
+    #}
+    #location ~ ^/chainweb/0.0/testnet04/chain/[0-9]+/pact/ {
+    #    proxy_pass http://service-api;
+    #}
+    #location ~ ^/chainweb/0.0/testnet04/rosetta/ {
+    #    proxy_pass http://service-api;
+    #}
 
     # Header stream (not enabled on all nodes)
-    location = /chainweb/0.0/testnet04/header/updates {
-        proxy_buffering off;
-        proxy_pass http://header-stream;
-    }
+    #location = /chainweb/0.0/testnet04/header/updates {
+    #    proxy_buffering off;
+    #    proxy_pass http://header-stream;
+    #}
 
+    # We are only exposing this node p2p api externally for syncing
     # Chain Database Endpoints (forwarded from peer API)
-    location ~ ^/chainweb/0.0/testnet04/chain/[0-9]+/(header|hash|branch|payload) {
+    location ~ ^/chainweb/0.0/mainnet01/chain/[0-9]+/(header|hash|branch|payload) {
         proxy_pass https://peer-api;
         proxy_ssl_verify off; # accept self-signed certificates
     }
-    location = /chainweb/0.0/testnet04/cut {
+    location = /chainweb/0.0/mainnet01/cut {
         limit_except GET OPTIONS { deny all; }
         proxy_pass https://peer-api;
         proxy_ssl_verify off; # accept self-signed certificates
     }
 
     # Mining
-    location /chainweb/0.0/testnet04/mining/ {
-        proxy_buffering off;
-        proxy_pass http://mining-api;
-    }
+    #location /chainweb/0.0/testnet04/mining/ {
+    #    proxy_buffering off;
+    #    proxy_pass http://mining-api;
+    #}
 
     # Default
     location / {
